@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Vue Events</h1>
+    </header>
+    <section id="events">
+      <h2>Events in Action</h2>
+      <button v-on:click="addCount">Add</button>
+      <!-- passing function with arguments -->
+      <button v-on:click="decrementCount(4)">Subtract</button>
+      <!-- parsing js expression -->
+      <button v-on:click="counter=counter-1">Subtract</button>
+      <button>Remove</button>
+      <!-- changing state to the tagged element n diplaying in site -->
+      <input type="text" id="name" v-on:input="changeHandler"/>
+      <!-- explicitly calling with args -->
+      <input type="text" id="name" v-on:input="ccchangeHandler($event,'name')"/>
+      <p>Your Name : {{name}}</p>
+      <p>Result: {{ counter }}</p>
+
+
+      <!-- Exploring Event Modifiers -->
+      <form v-on:submit="submitHandler">
+        <input type="text"/>
+        <button>Signup</button>
+        <!-- we can prevent form by event modifier in this /here we can also apply stop -->
+        <form v-on:submit.prevent="submitHandler">
+          <input type="text"/>
+          <button>Signup</button>
+      </form>
+      <!-- will use right click to update state -->
+      <button v-on:click.right="decrementCount(4)">Subtract</button>
+      <!--will update on keyup andenter is pressed this we can add for shift,ctrl,pageup,pagedown etc 
+       -->
+      <button v-on:keyup.enter="decrementCount(4)">Subtract</button>
+
+      <!-- there is some scenario where you can preserve state initial value in certain element
+      with v-once -->
+
+      <p v-once>{{counter}}</p>
+      <p>Result: {{ counter }}</p>
+    </section>
+  </body>
+</html>
