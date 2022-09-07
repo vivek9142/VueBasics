@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Vue Course Goals</h1>
+    </header>
+    <section id="user-goals">
+      <h2>My course goals</h2>
+      <input type="text" v-model="enteredGoalValue" />
+      <button @click="addGoal">Add Goal</button>
+      
+
+      <p v-if="goals.length === 0 ">No goals have been added yet - please start adding some!</p>
+      <ul v-else>
+        <!-- for looping data of array -->
+        <!-- goal can be written in many way el,e,element ,etc  -->
+        <!-- <li v-for="goal in goals">{{goal}}</li> -->
+
+        <!-- we can also get the index for the array elements -->
+        <li v-for="(goal,i) in goals">{{goal}} - {{i}}</li> 
+      </ul>
+
+      <!-- We can also loop through obj properties -->
+      <ul>
+        <!-- <li v-for="value in {name:'Max',age:31}">{{value}}</li> -->
+
+        <!-- we can also get key value pairs,index and print them -->
+        <li v-for="(value,key,i) in {name:'Max',age:31}">{{key}} : {{value}} - {{i}}</li>
+
+        <!-- we can also loop in numbers -->
+        <li v-for="num in 10">{{num}}</li>
+      </ul>
+
+    </section>
+  </body>
+</html>

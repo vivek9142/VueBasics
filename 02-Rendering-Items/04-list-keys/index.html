@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Vue Course Goals</h1>
+    </header>
+    <section id="user-goals">
+      <h2>My course goals</h2>
+      <input type="text" v-model="enteredGoalValue" />
+      <button @click="addGoal">Add Goal</button>
+      
+
+      <!-- <p v-if="goals.length === 0 ">No goals have been added yet - please start adding some!</p> -->
+      <!-- <ul v-else> -->
+        <!-- <li v-for="(goal,id) in goals" @click="removeGoal(id)"> -->
+          <!-- <p>{{goal}} - {{id}}</p> -->
+          <!-- stop list item to close because of enclosing list item so stop propogating -->
+          <!-- <input type="text" @click.stop > -->
+        <!-- </li> -->
+      <!-- </ul> -->
+
+      <!-- Let's say I have typed "something" in input of 1st listitem and try to delete
+        1st one. so it gets deleted but its "something" input value is moved to 2nd listitem
+        This is a bug
+
+        let's write the "something" in 2nd list item and remove the first one, this time 
+        the one left has no input value of "something".
+
+        You could argue that this is a niche scenario, but the problem that causes this 
+        is actually a bigger one,which can also lead to performance issues if you don't 
+        fix it properly.
+
+        The problem here is simple, Vue updates the list when you add and remove items,
+        it renders the list in the real Dom and updates it as required. And it tries to do 
+        that such that it optimizes performance.That also means that it reuses Dom elements.
+
+        So if we have two goals here, two Dom elements and I delete the first one,
+        Vue will actually not re-render the entire list.It will also not delete the first Dom element
+        and move to the second one around.
+        Instead it basically takes the content of the second element and moves it into the 
+        first Dom element. And that explains why if I enter some text here,that text is lost 
+        if I delete the first element.Because the first Dom element is not actually removed
+        instead the content of the second one.
+
+
+        there is a simple extra attribute, which is a non default HTML attribute,
+        which you can add on elements on which you also use V-for.And that's the key 
+        attribute.The key attribute,I'm going to say it again is not a default HTML 
+        attribute,instead it is an attribute understood and detected by Vue.
+
+        It's optional, but it is a good idea to add it whenever you're using V-for.key, 
+        once a unique identification criteria for every item it's outputting here.
+        Therefore, we wanna bind it to a dynamic value with V-bind or the short end, 
+        just a colon.And now in here, we need something that uniquely identifies every goal.
+        You might be inclined to say the index does that because every goal has its own index.
+        But well, keep in mind that if I have two goals and I delete the first one,
+        the old second one now has index zero.The index doesn't really belong to the goal 
+        content.
+       -->
+
+       <p v-if="goals.length === 0 ">No goals have been added yet - please start adding some!</p>
+      <ul v-else>
+        <li v-for="(goal,id) in goals" :key="goal" @click="removeGoal(id)">
+          <p>{{goal}} - {{id}}</p>
+          <input type="text" @click.stop >
+        </li>
+      </ul>
+
+    </section>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Vue Course Goals</h1>
+    </header>
+    <section id="user-goals">
+      <h2>My course goals</h2>
+      <input type="text" v-model="enteredGoalValue" />
+      <button @click="addGoal">Add Goal</button>
+      <!-- IF CONDITION  -->
+      <!-- <p v-if="goals.length === 0 ">No goals have been added yet - please start adding some!</p> -->
+      <!-- else if works in just after if condition if there is some element in b/w 
+        it doesnt work-->
+      <!-- <ul v-else-if="goals.length===1">
+        <li>Goal</li>
+      </ul> -->
+      <!-- else part same logic as else if  -->
+      <!-- <p v-else>else part</p> -->
+
+
+      <!-- now we can also use v-show here but v-if-else-if-else works to rmeove the 
+      elements from dom but v-show is present in dom and show n hide element by css
+      display:none or block; -->
+
+      <!-- V-show  -->
+      <p v-show="goals.length === 0 ">No goals have been added yet - please start adding some!</p>
+      
+      <ul v-show="goals.length===1">
+        <li>Goal</li>
+      </ul>
+
+      <!-- you should typically use v-if and only fall back to v-show if you have an element,
+      which visibility status changes a lot. So, if you have like a button that toggles 
+      an element and it's switching between visibility and being hidden all the time,
+      that is when you might want to consider v-show in other cases use v-if. -->
+
+    </section>
+  </body>
+</html>
