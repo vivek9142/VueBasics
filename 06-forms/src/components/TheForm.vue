@@ -50,6 +50,18 @@
         <label for="how-other">Other</label>
       </div>
     </div>
+    <!-- adding rating Control custom component -->
+    <div class="form-control">
+      <!-- 
+        when you use v-model on a custom component. So using v-model here is like manually 
+        binding model value,the model value prop and listening to the update model value 
+        custom event.If you use that, it's the same as if you use v-model.
+
+        <rating-control v-model="rating" :model-value="" @update:modelValue="">
+        </rating-control> -->
+        
+      <rating-control v-model="rating"></rating-control>
+    </div>
 
     <div class="form-control">
       <input type="checkbox" id="confirm-terms" name="confirm-terms" v-model="confirmTerms">
@@ -62,7 +74,12 @@
 </template>
 
 <script>
+import RatingControl from './RatingControl.vue';
+
 export default {
+  components:{
+    RatingControl
+  },
   data(){
     return{
       userName:'',
@@ -90,6 +107,9 @@ export default {
       this.how=null;
       console.log('confirm :'+this.confirmTerms);
       this.confirmTerms = false;
+
+      console.log('Rating '+this.rating);
+      this.rating = null;
     },
     validateInput(){
       if(this.userName === '')
