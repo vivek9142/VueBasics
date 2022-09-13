@@ -1,33 +1,15 @@
 <template>
   <form @submit.prevent="submitForm">
-    <div class="form-control">
+    <div class="form-control" :class="{invalid: userNameValidity === 'invalid'}">
       <label for="user-name">Your Name</label>
-      <!-- with v-model we can reset the input and take control over it so it is
-      preferred here -->
-      <input id="user-name" name="user-name" type="text" v-model="userName"/>
+      <input id="user-name" name="user-name" type="text" v-model.trim="userName" @blur="validateInput"/>
+      <p v-if="userNameValidity === 'invalid'">Please enter a valid Username</p>
     </div>
     <div class="form-control">
       <label for="age">Your Age (Years)</label>
-      <!-- the interesting thing of what you should be aware here is that v-model,
-      if used on an input of type number  automatically fetches the user input
-      and converts it from a string to a number of data type.By default, if you would 
-      be using just JavaScript or if you're using refs and therefore the native JavaScript 
-      object representing this input. By default, what's stored in the value is always a 
-      string. It's an extra feature added by Vue and v-model that it sees 
-      
-      in refs you'll only get string as an type 
-
-      Speaking off these modifiers, you might've seen it already, there are a couple of 
-      other modifiers as well. The lazy modifier allows you to change how Vue updates the 
-      bound property  If it does this on every keystroke or if for some inputs, it does 
-      this at a lower frequency.Trim allows you to tell Vue that it should remove excess 
-      white space at the beginning and end of the text that was entered.
-      -->
-
       <input id="age" name="age" type="number" v-model="userAge" />
     </div>
 
-    <!-- add select for referrer with v-model  -->
     <div class="form-control">
       <label for="referrer">How did you hear about us?</label>
       <select id="referrer" name="referrer" v-model="referrer">
@@ -36,8 +18,7 @@
         <option value="newspaper">Newspaper</option>
       </select>
     </div>
-    <!-- select dropdown add v-model same name to every radio, initialize seelct as array
-     and access in method -->
+    
     <div class="form-control">
       <h2>What are you interested in?</h2>
       <div>
@@ -53,7 +34,7 @@
         <label for="interest-nothing">Nothing</label>
       </div>
     </div>
-    <!-- radio button add v-model same name to every radio and access in method -->
+    
     <div class="form-control">
       <h2>How do you learn?</h2>
       <div>
@@ -70,7 +51,6 @@
       </div>
     </div>
 
-    <!-- for single checkbox, you can intialize it as false -->
     <div class="form-control">
       <input type="checkbox" id="confirm-terms" name="confirm-terms" v-model="confirmTerms">
       <label for="confirm-terms">Confirm Terms</label>
@@ -90,7 +70,8 @@ export default {
       referrer:'wom',
       interest:[],
       how:null,
-      confirmTerms:false
+      confirmTerms:false,
+      userNameValidity:'pending'
     }
   },
   methods:{
@@ -109,6 +90,11 @@ export default {
       this.how=null;
       console.log('confirm :'+this.confirmTerms);
       this.confirmTerms = false;
+    },
+    validateInput(){
+      if(this.userName === '')
+      this.userNameValidity = 'invalid';
+      else this.userNameValidity = 'valid';
     }
   }
 }
@@ -126,6 +112,14 @@ form {
 
 .form-control {
   margin: 0.5rem 0;
+}
+
+.form-control.invalid input{
+  border-color: red;
+}
+
+.form-control.invalid label {
+  color:red;
 }
 
 label {
