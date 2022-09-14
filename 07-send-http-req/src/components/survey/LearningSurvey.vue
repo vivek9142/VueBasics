@@ -29,6 +29,7 @@
         <p
           v-if="invalidInput"
         >One or more input fields are invalid. Please check your provided data.</p>
+        <p v-if="error">{{error}}</p>
         <div>
           <base-button>Submit</base-button>
         </div>
@@ -44,6 +45,7 @@ export default {
       enteredName: '',
       chosenRating: null,
       invalidInput: false,
+      error:null
     };
   },
   // emits: ['survey-submit'],
@@ -59,13 +61,24 @@ export default {
       //   userName: this.enteredName,
       //   rating: this.chosenRating,
       // });
-
+      this.error=null;
       fetch('https://vue-app-50596-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json',{
         method:"POST",
         headers:{
           'Content-Type':'application/json'
         },
+        // if we not stringify body  it will send res as 400 bad request so we're handling
+        // this err since it will not be catched by catch block
         body:JSON.stringify({name:this.enteredName,rating:this.chosenRating}),
+      }).then(res =>{
+        if(res.ok){
+          //...
+        } else {
+          throw new Error('Could not save data!');
+        }
+      }).catch(err => {
+        console.log(err);
+        this.error = err.message;
       })
 
       this.enteredName = '';
