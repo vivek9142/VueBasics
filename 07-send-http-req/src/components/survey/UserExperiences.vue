@@ -3,9 +3,11 @@
     <base-card>
       <h2>Submitted Experiences</h2>
       <div>
-        <base-button>Load Submitted Experiences</base-button>
+        <base-button @click="loadExperiences">Load Submitted Experiences</base-button>
       </div>
-      <ul>
+      <!-- loading placeholder -->
+      <p v-if="isLoading">Loading...</p>
+      <ul v-if="!isLoading">
         <survey-result
           v-for="result in results"
           :key="result.id"
@@ -21,10 +23,38 @@
 import SurveyResult from './SurveyResult.vue';
 
 export default {
-  props: ['results'],
+  // props: ['results'],
   components: {
     SurveyResult,
   },
+  data(){
+    return{
+      results:[],
+      isLoading:false,
+    }
+  },
+  methods:{
+    loadExperiences(){
+      this.isLoading=true;
+      fetch('https://vue-app-50596-default-rtdb.asia-southeast1.firebasedatabase.app/surveys.json')
+      .then((res) =>{
+        if(res.ok){
+          return res.json();
+        }
+      }).then((data) =>{
+        this.isLoading = false;
+        const result = [];
+        for(const id in data){
+          result.push({id:id, name:data[id].name, rating:data[id].rating});
+        }
+          this.results = result;
+      });
+    }
+  },
+  mounted(){
+    // load feedback results when dom is mounted
+    this.loadExperiences();
+  }
 };
 </script>
 
