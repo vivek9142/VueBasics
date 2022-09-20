@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <!-- add animate class if animatedBlock is enabled -->
     <div class="block" :class="{animate:animatedBlock}"></div>
-    <!-- added click listener to enable animate -->
     <button @click="animateBlock">Animate</button>
   </div>
   <base-modal @close="hideDialog" v-if="dialogIsVisible">
@@ -63,7 +61,6 @@ button:active {
   background-color: #290033;
   margin-bottom: 2rem;
 
-  /* animation transition */
   transition:transform 0.3s ease-out;
 }
 .container {
@@ -79,7 +76,24 @@ button:active {
 }
 
 .animate{
-  /* animation class*/
-  transform: translateX(-50px);
+  /* transform: translateX(-50px); */
+  /* forwards keep the last position as final or else not mentioned will
+    move back to initial state position
+  */
+  animation: slide-fade 0.3s ease-out forwards;
+}
+
+@keyframes slide-fade {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+
+  70% {
+    transform: translateX(-120px) scale(1.1);
+  }
+
+  100% {
+    transform: translateX(-150px) scale(1);
+  }
 }
 </style>
