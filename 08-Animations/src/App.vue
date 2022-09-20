@@ -3,11 +3,6 @@
     <div class="block" :class="{animate:animatedBlock}"></div>
     <button @click="animateBlock">Animate</button>
   </div>
-  <!-- There is a built in component, which you can wrap around the elements
-    where you wanna control the appearance and removal animation with Vue.
-    And that's the TRANSITION component. You can wrap the element, which should be animated, 
-    
-     transition must only contain one element, one direct child.-->
   <div class="container">
     <transition>
       <p v-if="paraIsVisible">This is only sometimes visible...</p>
@@ -88,63 +83,57 @@ button:active {
   border: 2px solid #ccc;
   border-radius: 12px;
 }
+/* let me show you how we could add this with this transition wrapper component.
+So on this paragraph, I mentioned that view would add these special CSS classes v-enter-from and 
+so on. 
 
-/* the default class names Vue will add are v-enter-from, v-enter-active and v-enter-to.
-Vue, by default, will add these three CSS classes at different times as explained
+Now, if you don't want to use this transition way, because maybe you have a more complex animation 
+with different steps, you can do this as well. Now we don't need all classes in that case though,
+we don't need v-enter-from because we have no starting state
+and we have no end state. 
 
-when the element is first added to the DOM. when the paragraph is appearing on the DOM for the first time. Now we can define different 
-class styles here. We can define different properties. And we should include at least one transition
-or animation so that Vue is able to read the duration time from these classes because I mentioned
-that this would be another key thing it does behind the scenes. 
+Instead, it's all defined in the animation. So in the end, we just have animation in v-enter-active.
+Then I point at the slide-scale animation to find the duration which you will read as you 
+learned and ease-out. You don't even need forwords here, because you need to keep in mind
+that all those special classes are being removed once the animation is over. 
 
-You have similar classes for removing. There we have the v-leave-from class.
-We have the v-leave-active class and we have the v-leave-to class.
-And it's the same concept as for entering. We define our starting state,
-which for me here is the same state as the end state for entering
+Now we can do the same for a leaving though.Don't need a from state, don't need a to state
+but for v-leave-active of instead of transition. We can use animations slide-scale .3 seconds 
+ease-out.
 */
 
-.v-enter-from {
+/* .v-enter-from {
   opacity: 0;
   transform: translateY(-30px);
-}
+} */
 
 .v-enter-active {
-  transition: all 0.3s ease-out;
+  animation: slide-scale 0.3s ease-out;
 }
 
-.v-enter-to {
+/* .v-enter-to {
   opacity: 1;
   transform: translateY(0);
-}
-.v-leave-from {
+} */
+/* .v-leave-from {
   opacity: 1;
   transform: translateY(0);
-}
+} */
 
 .v-leave-active {
-  transition: all 0.3s ease-in;
+  animation: slide-scale 0.3s ease-out;
 }
 
-.v-leave-to {
+/* .v-leave-to {
   opacity: 0;
   transform: translateY(-30px);
-}
-
-/*
-You don't need transition comp if you're not having this v-if or v-show case
-because if you just have something like the block in the first example,
-in the last lectures,
-
-you can just conditionally add and remove CSS classes as you learned it.
-It's just this added to the DOM or removed to the DOM case where you can't do that
-because the element is just not there and that's where transition then helps you.
-*/
+} */
 
 .animate{
   animation: slide-fade 0.3s ease-out forwards;
 }
 
-@keyframes slide-fade {
+@keyframes slide-scale {
   0% {
     transform: translateX(0) scale(1);
   }
