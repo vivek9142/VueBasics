@@ -4,47 +4,45 @@
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
-    <transition name="para">
+    <!-- Sometimes you'll also want to run some JavaScript code, either as part of the transition,
+    maybe to even control the entire transition and the style changes Fruit JavaScript,
+    or maybe because you want to do something when an animation starts or when it ends.
+    And vue gives you an opportunity to do that as well. It gives you various events,
+    which are emitted by this transition component during a transition. 
+    
+    before-enter  - triggers when the enter animation starts, so in the end, you could say,
+                    this runs whenever this enter from CSS class is being added.so right at the 
+                    beginning, when the element is added and the animation starts.
+
+    before-leave  - we can also listen to that event or the point of time when that element that is 
+                    wrapped is leaving the Dom.
+
+    enter         - We also have an @enter event to which we can listen. This is basically the 
+                    equivalent to the Active CSS Class. The enter event is triggered as a next step
+                    then beforeEnter is done, you could say.
+    after-enter   - This will fire whenever the animation is done,actually it waits for the animation .
+                    to finish until afterEnter gets called.
+    
+    leave         - which is called when the "leave" transition finished,
+    after-leave   - after leave method is done executing
+    -->
+
+    <transition 
+      name="para" 
+      @before-enter="beforEnter" 
+      @before-leave="beforeLeav" 
+      @enter="entr"
+      @after-enter="aftrEntr"
+      @leave="leav"
+      @after-leave="afterLeav">
+      
       <p v-if="paraIsVisible">This is only sometimes visible...</p>
     </transition>
     <button @click="toggleParagraph">Toggle Paragraph</button>
   </div>
-  <!-- 
-     I always emphasized that transition must only have one direct child element,
-     and because of that, we had to change our Base Modal a little bit here,
-     to ensure that transition has only one direct child element.
-     Well, actually there are exceptions to that rule, there is a scenario where you might
-     have more than one direct child element, and here it is.
-    In App Vue, I'm going to add a new Div with a class of container, simply to show you a new example
-    inside of that Div. And here, I'll add a good, old button, but now we'll animate the button itself,
-    and I'll have a button here,
-   -->
-   <div class="container">
-    <!-- 
-        There is one exception, where you are allowed to have more than one
-        direct child element inside of your transition component,and that is the exception here.
-        The exception is, if of the child elements you have in your transition,
-        you're guaranteed that at most one is added to the real dom at the same time,
-        and that's the case here. We got 2 alternatives If statements, and therefore we guarantee
-        that only one of these 2 buttons will be added to the real dom at a time. 
-    -->
-
-    <!-- 
-      We want this fade transition, but we don't want both buttons at the same time on the screen.
-      Instead, one button should fade out, and then the other button should fade in,
-      that's the idea, and that's also something that you can control.
   
-      You can add the "mode" prop here to the transition component,
-      and "mode" knows two values, "in-out", and "out-in",
-      and this controls whether first, the leaving element should be animated, or the new element. 
-      So if I set this to "in-out",and reload, we got the same behavior as before,or a similar behavior.
-      
-      Now, the addition of the button is animated first, and then the button is removed.We can switch 
-      this to "out-in",and now we will have a better behavior  without in, if we reload,
-      Vue will first animate the removal of the button, and then animate the addition of the new button.
-      So, this allows you to control which element should be animated first,instead of animating both 
-      at the same time,which gave us this undesirable output.
-     -->
+   <div class="container">
+
     <transition name="fade-button" mode="out-in">
       <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
       <button @click="hideUsers" v-else>Hide Users</button>
@@ -67,6 +65,30 @@ export default {
     return { animatedBlock:false,dialogIsVisible: false,paraIsVisible:false,usersAreVisible:true };
   },
   methods: {
+    beforEnter(el){
+      console.log('beforeEnter')
+      console.log(el);
+    },
+    beforeLeav(el){
+      console.log('beforeLeave' )
+      console.log(el);
+    },
+    entr(el){
+      console.log('enter' )
+      console.log(el);
+    },
+    aftrEntr(el){
+      console.log('after enter' )
+      console.log(el);
+    },
+    leav(el){
+      console.log('leave' )
+      console.log(el);
+    },
+    afterLeav(el){
+      console.log('after leave' )
+      console.log(el);
+    },
     showDialog() {
       this.dialogIsVisible = true;
     },
