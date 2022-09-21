@@ -1,10 +1,30 @@
+Vue always adds the same CSS classes to all elements, which basically means you will use the same 
+animations and transitions for all elements. Maybe that is your requirement. Maybe that is what you 
+want, but maybe you want different transitions for different transition components on your page.
+
+And that's why you can customize those names here.
+We could, for example name this para-enter-from para-enter-active, para-enter-two,
+and the same for the leave classes instead of the v- thing at the beginning.
+But with that Vue of course wouldn't know that these are the CSS classes it should add and analyze
+instead with just the names changed here, we have no animation because Vue will stick to its default
+v-enter-from, v-enter-to and so on class names. We need to tell Vue that for this transition component here,
+it should add the para-classes and we do so by adding a special name prop
+to the transition component.
+
+Here you add your custom prefix, which in my case is para, but which can be anything you want.
+And if you do that now these para-enter-from, enter-active, enter-to.
+And so on classes will be added and managed and analyzed by Vue.
+
 <template>
   <div class="container">
     <div class="block" :class="{animate:animatedBlock}"></div>
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
-    <transition>
+    <!-- we can also  add custom class names such as-->
+    <!-- <transition enter-to-class="para" enter-active-class="..."> -->
+    <!-- added name para to recognise para-enter,utility classes -->
+    <transition name="para">
       <p v-if="paraIsVisible">This is only sometimes visible...</p>
     </transition>
     <button @click="toggleParagraph">Toggle Paragraph</button>
@@ -83,31 +103,14 @@ button:active {
   border: 2px solid #ccc;
   border-radius: 12px;
 }
-/* let me show you how we could add this with this transition wrapper component.
-So on this paragraph, I mentioned that view would add these special CSS classes v-enter-from and 
-so on. 
 
-Now, if you don't want to use this transition way, because maybe you have a more complex animation 
-with different steps, you can do this as well. Now we don't need all classes in that case though,
-we don't need v-enter-from because we have no starting state
-and we have no end state. 
-
-Instead, it's all defined in the animation. So in the end, we just have animation in v-enter-active.
-Then I point at the slide-scale animation to find the duration which you will read as you 
-learned and ease-out. You don't even need forwords here, because you need to keep in mind
-that all those special classes are being removed once the animation is over. 
-
-Now we can do the same for a leaving though.Don't need a from state, don't need a to state
-but for v-leave-active of instead of transition. We can use animations slide-scale .3 seconds 
-ease-out.
-*/
 
 /* .v-enter-from {
   opacity: 0;
   transform: translateY(-30px);
 } */
 
-.v-enter-active {
+.para-enter-active {
   animation: slide-scale 0.3s ease-out;
 }
 
@@ -120,7 +123,7 @@ ease-out.
   transform: translateY(0);
 } */
 
-.v-leave-active {
+.para-leave-active {
   animation: slide-scale 0.3s ease-out;
 }
 
