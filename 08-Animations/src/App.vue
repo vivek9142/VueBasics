@@ -1,35 +1,46 @@
-Vue always adds the same CSS classes to all elements, which basically means you will use the same 
-animations and transitions for all elements. Maybe that is your requirement. Maybe that is what you 
-want, but maybe you want different transitions for different transition components on your page.
-
-And that's why you can customize those names here.
-We could, for example name this para-enter-from para-enter-active, para-enter-two,
-and the same for the leave classes instead of the v- thing at the beginning.
-But with that Vue of course wouldn't know that these are the CSS classes it should add and analyze
-instead with just the names changed here, we have no animation because Vue will stick to its default
-v-enter-from, v-enter-to and so on class names. We need to tell Vue that for this transition component here,
-it should add the para-classes and we do so by adding a special name prop
-to the transition component.
-
-Here you add your custom prefix, which in my case is para, but which can be anything you want.
-And if you do that now these para-enter-from, enter-active, enter-to.
-And so on classes will be added and managed and analyzed by Vue.
-
 <template>
   <div class="container">
     <div class="block" :class="{animate:animatedBlock}"></div>
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
-    <!-- we can also  add custom class names such as-->
-    <!-- <transition enter-to-class="para" enter-active-class="..."> -->
-    <!-- added name para to recognise para-enter,utility classes -->
     <transition name="para">
       <p v-if="paraIsVisible">This is only sometimes visible...</p>
     </transition>
     <button @click="toggleParagraph">Toggle Paragraph</button>
   </div>
-  <base-modal @close="hideDialog" v-if="dialogIsVisible">
+
+  <!-- adding transition for modal -->
+  <!-- But if we have both root elements here, which you of course want, then this does not work.
+    And it doesn't work because as I mentioned before, this transition component wants one direct 
+    child element. Yes, it has just one child element here, just one base-model.
+    
+    But of course the base-model here, is really just a wrapper around its template,
+    where we have two root elements. So these two root elements, this div and this dialogue,
+    these are the actual direct child elements inside of this transition component.
+    Well, and two elements are more than one. That's why this set-up here does not work. 
+    
+    
+    Well, there are various ways of solving this. We can, for example, split this into two components
+    and manage the backdrop separately. But we could also bring this transition component
+    over to base-model and try using it in there to transition to style log.
+    And that's the route I will take here. so we'll move the animation and transition to the dialog 
+    in base-modal in dialog comp 
+    -->
+
+
+    <!-- Now, after changing the concept however, we need to change the logic, how this base-model 
+    opens.At the moment, I'm adding the base-model component in App.vue with v-if.
+    And this won't work, if I want to use transition inside of the base-model template
+    to animate the addition and remove of dialogue.If transition is part of that template,
+    which has added and removed with v-if, it won't have any effect.
+    
+    Therefore I'll now open and close the modal differently.I'll add a new open prop, to my 
+    base-model component and point at dialogue is visible there. So forward, the dialogue is 
+    visible property through the open prop to the base-model component.And now in the base-model 
+    component, we can accept this prop here. in BaseModal -->
+  
+    <base-modal @close="hideDialog" :open="dialogIsVisible">
     <p>This is a test dialog!</p>
     <button @click="hideDialog">Close it!</button>
   </base-modal>
@@ -135,6 +146,8 @@ button:active {
 .animate{
   animation: slide-fade 0.3s ease-out forwards;
 }
+
+
 
 @keyframes slide-scale {
   0% {
