@@ -9,37 +9,49 @@
     </transition>
     <button @click="toggleParagraph">Toggle Paragraph</button>
   </div>
-
-  <!-- adding transition for modal -->
-  <!-- But if we have both root elements here, which you of course want, then this does not work.
-    And it doesn't work because as I mentioned before, this transition component wants one direct 
-    child element. Yes, it has just one child element here, just one base-model.
-    
-    But of course the base-model here, is really just a wrapper around its template,
-    where we have two root elements. So these two root elements, this div and this dialogue,
-    these are the actual direct child elements inside of this transition component.
-    Well, and two elements are more than one. That's why this set-up here does not work. 
-    
-    
-    Well, there are various ways of solving this. We can, for example, split this into two components
-    and manage the backdrop separately. But we could also bring this transition component
-    over to base-model and try using it in there to transition to style log.
-    And that's the route I will take here. so we'll move the animation and transition to the dialog 
-    in base-modal in dialog comp 
+  <!-- 
+     I always emphasized that transition must only have one direct child element,
+     and because of that, we had to change our Base Modal a little bit here,
+     to ensure that transition has only one direct child element.
+     Well, actually there are exceptions to that rule, there is a scenario where you might
+     have more than one direct child element, and here it is.
+    In App Vue, I'm going to add a new Div with a class of container, simply to show you a new example
+    inside of that Div. And here, I'll add a good, old button, but now we'll animate the button itself,
+    and I'll have a button here,
+   -->
+   <div class="container">
+    <!-- 
+        There is one exception, where you are allowed to have more than one
+        direct child element inside of your transition component,and that is the exception here.
+        The exception is, if of the child elements you have in your transition,
+        you're guaranteed that at most one is added to the real dom at the same time,
+        and that's the case here. We got 2 alternatives If statements, and therefore we guarantee
+        that only one of these 2 buttons will be added to the real dom at a time. 
     -->
 
-
-    <!-- Now, after changing the concept however, we need to change the logic, how this base-model 
-    opens.At the moment, I'm adding the base-model component in App.vue with v-if.
-    And this won't work, if I want to use transition inside of the base-model template
-    to animate the addition and remove of dialogue.If transition is part of that template,
-    which has added and removed with v-if, it won't have any effect.
-    
-    Therefore I'll now open and close the modal differently.I'll add a new open prop, to my 
-    base-model component and point at dialogue is visible there. So forward, the dialogue is 
-    visible property through the open prop to the base-model component.And now in the base-model 
-    component, we can accept this prop here. in BaseModal -->
+    <!-- 
+      We want this fade transition, but we don't want both buttons at the same time on the screen.
+      Instead, one button should fade out, and then the other button should fade in,
+      that's the idea, and that's also something that you can control.
   
+      You can add the "mode" prop here to the transition component,
+      and "mode" knows two values, "in-out", and "out-in",
+      and this controls whether first, the leaving element should be animated, or the new element. 
+      So if I set this to "in-out",and reload, we got the same behavior as before,or a similar behavior.
+      
+      Now, the addition of the button is animated first, and then the button is removed.We can switch 
+      this to "out-in",and now we will have a better behavior  without in, if we reload,
+      Vue will first animate the removal of the button, and then animate the addition of the new button.
+      So, this allows you to control which element should be animated first,instead of animating both 
+      at the same time,which gave us this undesirable output.
+     -->
+    <transition name="fade-button" mode="out-in">
+      <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
+      <button @click="hideUsers" v-else>Hide Users</button>
+    </transition>
+   </div>
+
+
     <base-modal @close="hideDialog" :open="dialogIsVisible">
     <p>This is a test dialog!</p>
     <button @click="hideDialog">Close it!</button>
@@ -52,7 +64,7 @@
 <script>
 export default {
   data() {
-    return { animatedBlock:false,dialogIsVisible: false,paraIsVisible:false };
+    return { animatedBlock:false,dialogIsVisible: false,paraIsVisible:false,usersAreVisible:true };
   },
   methods: {
     showDialog() {
@@ -66,6 +78,12 @@ export default {
     },
     toggleParagraph(){
       this.paraIsVisible = !this.paraIsVisible;
+    },
+    showUsers(){
+      this.usersAreVisible = true;
+    },
+    hideUsers(){
+      this.usersAreVisible = false;
     }
   },
 };
@@ -142,6 +160,22 @@ button:active {
   opacity: 0;
   transform: translateY(-30px);
 } */
+
+.fade-button-enter-from,.fade-button-leave-to{
+  opacity: 0;
+}
+
+.fade-button-enter-active{
+  transition: opacity 0.3s ease-out;
+}
+
+.fade-button-leave-active{
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-button-enter-to,.fade-button-leave-from{
+  opacity: 1;
+}
 
 .animate{
   animation: slide-fade 0.3s ease-out forwards;
