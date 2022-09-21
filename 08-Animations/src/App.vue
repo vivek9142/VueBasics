@@ -4,28 +4,10 @@
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
-    <!-- Sometimes you'll also want to run some JavaScript code, either as part of the transition,
-    maybe to even control the entire transition and the style changes Fruit JavaScript,
-    or maybe because you want to do something when an animation starts or when it ends.
-    And vue gives you an opportunity to do that as well. It gives you various events,
-    which are emitted by this transition component during a transition. 
-    
-    before-enter  - triggers when the enter animation starts, so in the end, you could say,
-                    this runs whenever this enter from CSS class is being added.so right at the 
-                    beginning, when the element is added and the animation starts.
-
-    before-leave  - we can also listen to that event or the point of time when that element that is 
-                    wrapped is leaving the Dom.
-
-    enter         - We also have an @enter event to which we can listen. This is basically the 
-                    equivalent to the Active CSS Class. The enter event is triggered as a next step
-                    then beforeEnter is done, you could say.
-    after-enter   - This will fire whenever the animation is done,actually it waits for the animation .
-                    to finish until afterEnter gets called.
-    
-    leave         - which is called when the "leave" transition finished,
-    after-leave   - after leave method is done executing
-    -->
+   <!-- 
+    now we'll try to add animation in transitions with js 
+    we'll make use of these methods to create animation
+   -->
 
     <transition 
       name="para" 
@@ -34,7 +16,9 @@
       @enter="entr"
       @after-enter="aftrEntr"
       @leave="leav"
-      @after-leave="afterLeav">
+      @after-leave="afterLeav"
+      @enter-cancelled="enterCancelled"
+      @leave-cancelled="leaveCancelled">
       
       <p v-if="paraIsVisible">This is only sometimes visible...</p>
     </transition>
@@ -62,28 +46,97 @@
 <script>
 export default {
   data() {
-    return { animatedBlock:false,dialogIsVisible: false,paraIsVisible:false,usersAreVisible:true };
+    return { 
+    animatedBlock:false,
+    dialogIsVisible: false,
+    paraIsVisible:false,
+    usersAreVisible:true,
+    enterInterval:null,
+    leaveInterval:null
+    };
   },
   methods: {
+    enterCancelled(){
+      clearInterval(this.enterInterval)
+    },
+    leaveCancelled(){
+      clearInterval(this.leaveInterval);
+    },
     beforEnter(el){
       console.log('beforeEnter')
+      console.log(el);
+      el.style.opacity = 0;
+    },
+    entr(el,done){
+      console.log('enter' )
+      console.log(el);
+      let round=1;
+      this.enterInterval = setInterval(() => {
+        el.style.opacity = round * 0.01;
+        round++;
+        if(round>100) {
+          clearInterval(this.enterInterval);
+          done();
+        }
+      },20);
+    },
+    /*
+    I click Toggle Paragraph and afterEnter is called right away.
+    This might or might not matter to you.But actually the order is wrong as you can tell;
+    it's called too early. And in some cases this might matter. And this is not a bug.
+    
+    But instead Vue has no chance of knowing when it should call afterEnter.
+    To us it's obvious. I mean, we're done with enter, once we in the end
+    make it into this if condition. But that's something view doesn't really understand.
+    That's way too logical. It doesn't parse and try to understand our code
+    and our reasons behind writing that code. Instead, we have to tell you when we're done here.
+    And for that, enter, actually receives a second argument automatically.
+    
+    And that's a done function, which you can call whenever you want to signal to Vue that you are 
+    done in this hook. You don't need to call it if you're having CSS-based animations
+    because then Vue is able to read the duration in the CSS code. But if you're not using CSS, 
+    if you have your own logic and the duration is simply just made up by incrementing round and 
+    checking this condition and having a certain interval time here, then you need to call done 
+    explicitly to let Vue know when you're done.
+    
+    So here after clearInterval, we call done. We call this done argument as a function
+    to let you know when we're done.
+
+     you'll also see it flickers a little bit. And it's flickering, because in the end
+     it's playing two animations at the same time.If we cancel the first animation that effectively 
+     just means that the leave animation starts before the entering animation finished or the other 
+     way around.So then both animations are playing at the same time resulting in that flickering 
+     which you saw here. And that's also something we can prevent.
+
+      Because there is another useful event which is emitted by the transition component.
+      And that is the enter dash canceled event and the leave canceled event.
+      And here we can execute methods which are called whenever the animation is canceled.
+      And by the way, those events are always emitted
+      when it's canceled, no matter if you are writing your logic with JavaScript as we're doing it 
+      here. Or if you would be using CSS as we did before. Whenever one transition isn't finished,
+      when you start a new a transition,the respective canceled event will be emitted.
+    */ 
+    aftrEntr(el){
+      console.log('after enter' )
       console.log(el);
     },
     beforeLeav(el){
       console.log('beforeLeave' )
       console.log(el);
+      el.style.opacity=1;
     },
-    entr(el){
-      console.log('enter' )
-      console.log(el);
-    },
-    aftrEntr(el){
-      console.log('after enter' )
-      console.log(el);
-    },
-    leav(el){
+    leav(el,done){
       console.log('leave' )
       console.log(el);
+      let round=1;
+      this.leaveInterval =  setInterval(() =>{
+        el.style.opacity = 1 - round * 0.01;
+        round++;
+        if(round>100) {
+          clearInterval(this.leaveInterval);
+          done();
+        }
+      },20);
     },
     afterLeav(el){
       console.log('after leave' )
@@ -161,9 +214,9 @@ button:active {
   transform: translateY(-30px);
 } */
 
-.para-enter-active {
+/* .para-enter-active {
   animation: slide-scale 0.3s ease-out;
-}
+} */
 
 /* .v-enter-to {
   opacity: 1;
@@ -174,9 +227,9 @@ button:active {
   transform: translateY(0);
 } */
 
-.para-leave-active {
+/* .para-leave-active {
   animation: slide-scale 0.3s ease-out;
-}
+} */
 
 /* .v-leave-to {
   opacity: 0;
