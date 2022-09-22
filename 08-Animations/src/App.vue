@@ -4,13 +4,17 @@
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
-   <!-- 
-    now we'll try to add animation in transitions with js 
-    we'll make use of these methods to create animation
-   -->
+<!-- if we're not using css here we can make vue aware of it by css='false' 
 
+  And why is this a helpful piece of information we can pass to you?
+  It's technically not required, as you saw it worked. But now by passing this prop,
+  we tell vue that it doesn't even need to search for the respective CSS classes
+  in our CSS code for this transition. It doesn't even need to try to read the duration
+  from our CSS code, because it won't find it, because we're not using CSS code.
+-->
     <transition 
       name="para" 
+      :css="false"
       @before-enter="beforEnter" 
       @before-leave="beforeLeav" 
       @enter="entr"
@@ -80,42 +84,6 @@ export default {
         }
       },20);
     },
-    /*
-    I click Toggle Paragraph and afterEnter is called right away.
-    This might or might not matter to you.But actually the order is wrong as you can tell;
-    it's called too early. And in some cases this might matter. And this is not a bug.
-    
-    But instead Vue has no chance of knowing when it should call afterEnter.
-    To us it's obvious. I mean, we're done with enter, once we in the end
-    make it into this if condition. But that's something view doesn't really understand.
-    That's way too logical. It doesn't parse and try to understand our code
-    and our reasons behind writing that code. Instead, we have to tell you when we're done here.
-    And for that, enter, actually receives a second argument automatically.
-    
-    And that's a done function, which you can call whenever you want to signal to Vue that you are 
-    done in this hook. You don't need to call it if you're having CSS-based animations
-    because then Vue is able to read the duration in the CSS code. But if you're not using CSS, 
-    if you have your own logic and the duration is simply just made up by incrementing round and 
-    checking this condition and having a certain interval time here, then you need to call done 
-    explicitly to let Vue know when you're done.
-    
-    So here after clearInterval, we call done. We call this done argument as a function
-    to let you know when we're done.
-
-     you'll also see it flickers a little bit. And it's flickering, because in the end
-     it's playing two animations at the same time.If we cancel the first animation that effectively 
-     just means that the leave animation starts before the entering animation finished or the other 
-     way around.So then both animations are playing at the same time resulting in that flickering 
-     which you saw here. And that's also something we can prevent.
-
-      Because there is another useful event which is emitted by the transition component.
-      And that is the enter dash canceled event and the leave canceled event.
-      And here we can execute methods which are called whenever the animation is canceled.
-      And by the way, those events are always emitted
-      when it's canceled, no matter if you are writing your logic with JavaScript as we're doing it 
-      here. Or if you would be using CSS as we did before. Whenever one transition isn't finished,
-      when you start a new a transition,the respective canceled event will be emitted.
-    */ 
     aftrEntr(el){
       console.log('after enter' )
       console.log(el);
