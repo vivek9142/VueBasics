@@ -1,17 +1,13 @@
 <template>
   <div class="container">
+    <UsersList/>
+  </div>
+  <div class="container">
     <div class="block" :class="{animate:animatedBlock}"></div>
     <button @click="animateBlock">Animate</button>
   </div>
   <div class="container">
-<!-- if we're not using css here we can make vue aware of it by css='false' 
 
-  And why is this a helpful piece of information we can pass to you?
-  It's technically not required, as you saw it worked. But now by passing this prop,
-  we tell vue that it doesn't even need to search for the respective CSS classes
-  in our CSS code for this transition. It doesn't even need to try to read the duration
-  from our CSS code, because it won't find it, because we're not using CSS code.
--->
     <transition 
       name="para" 
       :css="false"
@@ -48,7 +44,10 @@
 </template>  
 
 <script>
+import UsersList from './components/UsersList.vue';
+
 export default {
+  components:{UsersList},
   data() {
     return { 
     animatedBlock:false,
