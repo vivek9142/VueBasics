@@ -4,15 +4,16 @@ import { createStore } from 'vuex';
 import App from './App.vue';
 
 /*
-where we create our store, we don't just have the state here,
-we also have mutations. Mutations takes an object and in this object, you can 
-define methods.
+Now some mutations might require arguments. Here, we got the increment mutation
+and the value by which we increment this is hard coded into this code.
 
-For example, I addOne method or increment.Whatever you wanna call it.
-And this method should contain the logic to change this state.
-Now, this method will automatically get the current state as a argument.
-This is guaranteed by Vuex. Vuex will give us the current state
-whenever this method is triggered
+We could add and increase mutation, which also gets to state and say that in 
+here, we also want to change the counter, but we actually want to increase 
+it by a value which can be defined when this mutation is committed.
+
+And you also allow for this scenario, your mutations actually also take a 
+second argument, a payload, so a data package that can be a pendant.
+And I'm going to name the argument payload here
 */
 
 const store = createStore({
@@ -24,6 +25,9 @@ const store = createStore({
   mutations: {
     increment(state) {
       state.counter = state.counter + 2;
+    },
+    increase(state, payload) {
+      state.counter += payload.value;
     },
   },
 });
