@@ -27,17 +27,7 @@ export default {
       //   type:'increase',
       //   value:10
       // })
-
-      /*
-      inside of the component where we previously committed,
-      we can now dispatch an action. And the cool thing is the syntax for 
-      dispatching is pretty much the same as for committing.
-      You can either dispatch with two arguments where the first argument 
-      is the action name. So in my case increments here.
-      And the second argument is a potential payload you want, or you use the 
-      one argument syntax.Here however, I'm dispatching increase, 
-      which doesn't exist as an action yet.
-      */
+      
       // this.$store.dispatch('increase', {value:10});
       this.$store.dispatch({
         type:'increase',

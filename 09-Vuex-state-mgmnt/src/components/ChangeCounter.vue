@@ -7,7 +7,6 @@
 export default {
   methods:{
     addOne(){
-        // dispatch increment action here
     this.$store.dispatch('increment');
     }
   }
