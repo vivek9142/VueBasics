@@ -1,42 +1,49 @@
+/*
+Let's say, in the increment mutation, we don't wanna increment immediately.
+Instead, we wanna wait two seconds and then increment. Now this might be a 
+dumb example, but a better example could be an app where you send an HTTP 
+request and you wait for the response. And only once the response is there,
+you wanna change your state.
+
+Put in other words, you sometimes have code, which runs asynchronously,
+which doesn't finish immediately, but sometimes in the future.
+The problem is that Mutations must be synchronous. You're not allowed to have 
+any asynchronous code in there. So if you run a Mutation,
+it needs to execute step-by-step-by-step without any pause and immediately 
+change the state. It's not allowed to do anything that may take a bit longer.
+
+The reason for that simply is that if multiple Mutations execute,
+every mutation should get the latest state.And if another mutation was 
+committed, but didn't finish yet, that is unexpected and will lead to 
+errors in your program.That's why a key requirement of Mutations
+is that they have to be synchronous. But what if I do want to wait for two 
+seconds?
+
+We could do it as we've set timeout. There, we could wait two seconds,
+and then the function here, which then executes after two seconds,
+we update our state. But this is actually not allowed.
+It will work if you try it, but it is a very bad practice and nothing 
+you should do.
+
+Instead Vuex has a better concept in place for working with asynchronous code.
+Besides Mutations and Getters, it also has Actions. And Components should 
+trigger Actions,which then in turn commit Mutations.
+Because Actions can now use asynchronous code. And because of that,
+it's actually considered a good practice in general, to always put Actions 
+between Components and Mutations, even though Components could commit 
+Mutations themselves.And that wouldn't be a problem if you only had 
+synchronous code.
+
+But even with that fact that directly committing Mutations from inside 
+Components often would not be a problem. Even with that, it is considered a 
+good practice to always put Actions in between to ensure that you never 
+accidentally put asynchronous code into Mutations.
+*/
+
 import { createApp } from 'vue';
 import { createStore } from 'vuex';
 
 import App from './App.vue';
-
-/*
-Now of course both comp will work. We got the counter twice now,
-and it updates in both components. Now lets say we decide that actually we 
-always want our output to counter times two.
-
-So we update it here in FavoriteValue and we update it in the counter.
-Do you see the problem? We are again replicating logic here.
-We do have duplicate code. And again in bigger more realistic applications,
-this might absolutely happen.
-
-That we need the same kind of data in different components, and then we decide 
-that we want to format or calculate the data differently. And therefore we 
-suddenly need to change it in all the different places.
-
-This is why we might not want to directly talk to the state. Instead we can use 
-a concept called Getters. Which in the end are, you could say computer 
-properties defined directly in the store, which we then can use from inside 
-any component of our choice.
-
-So here is how we add a getter to our Vuex store. Next to mutations,
-doesn't matter where exactly but in the same place as State and Mutations,
-you add getters. This takes an object, and every getter is a method in this 
-object now.
-
-So basically just like computer properties are methods in the computed option 
-of components. Here we could have the final counter getter
-lets say. 
-
-And the final Counter Getter method like all getter method in Vuex,
-gets two arguments.The current State, which we need to get a value out of it,
-and other getters.
-Getting other getters in a getter can be helpful if the value you wanna 
-calculate here, depends on the result of an another getter.
-*/
 
 const store = createStore({
   state() {
@@ -52,20 +59,58 @@ const store = createStore({
       state.counter += payload.value;
     },
   },
+  actions: {
+    /*
+  In main js, besides Mutations and Getters and State,
+  we can add Actions. And I'm doing this here, I'll add Actions here.
+  And Action also takes an object just like Getters and Mutations did.
+  
+  An action again is just a method. For example, increment: You can use the 
+  same name here as you do in your Mutations. So here I've got an increment 
+  mutation. I'm also using an increment action. You don't have to use the 
+  same name,but often you will because often you just have an action
+  in between a component and a mutation. So using the same name makes sense.
+
+  this action will get an object as a argument, a context object.
+  And this context object is full of interesting things. The actual get this 
+  argument automatically by Vuex,
+  */
+
+    increment(context) {
+      /*
+    Now context, for example, has a commit method, which you can call.
+    And it's does what you think, it commits a mutation, just like you could 
+    commit it from inside a component. You can pass a second argument as a 
+    payload and you can pass an object alternatively
+    to the two argument way of using it. But here I only need one argument
+    and that will be the name of the mutation that should be committed.
+    
+    Now we'll have a look at the other things inside of context in a second,
+    but for the moment, let's leave it like this. And now we got an action 
+    which commits increment. The interesting thing is that Actions,
+    unlike Mutations are allowed to run asynchronous code. So we can take our 
+    timeout here and wrap context commit with it. With that, the mutation is 
+    synchronous again, but the action is asynchronous,
+    which is allowed by Veux. 
+    
+    It simply commits the mutation only once the two seconds have passed.
+    And now we need to change our component code and make sure that we don't 
+    commit from inside the component, but that we use the action instead.
+    */
+      setTimeout(function () {
+        context.commit('increment');
+      }, 2000);
+    },
+
+    increase(context, payload) {
+      // here's where we can do the payload integration with actions
+      context.commit('increase', payload);
+    },
+  },
   getters: {
     finalCounter(state) {
       return state.counter * 3;
     },
-    /*
-     I mentioned that you can't have multiple getters, and that getters can 
-     also depend on each other. Lets say, besides our FinalCounter getter,
-     we have another getter which is called normalizedCounter.
-    
-     And the idea here is simple, I wanna use my counter value,
-     to be precise the FinalCounter value, but I want to make sure it's 
-     greater than zero and smaller than 100.
-     And I either output zero or 100 if one of this boundaries is crossed.
-    */
 
     // normalizedCounter(state) {
     //   const finalCounter = state.counter * 3;
@@ -75,18 +120,6 @@ const store = createStore({
     //   return finalCounter;
     // },
 
-    /*
-     And with that you would see that as soon as we exceed 100, the bottom 
-     counters stays at 100. Because of the logic we just added.
-     Now this works but it's not great. We are calculating something,
-     which we've already calculate in another getter. And that's why we get 
-     this getters second argument here. With that we can refer to our getters,
-     and get our FinalCounter, simply by calling getters.FinalCounter
-     and imagine we had more code in there.
-     
-     Replicating that all in another getter, is just unnecessary if we already 
-     do have a getter for that.
-     */
     normalizedCounter(_, getters) {
       const finalCounter = getters.finalCounter;
       if (finalCounter < 0) return 0;

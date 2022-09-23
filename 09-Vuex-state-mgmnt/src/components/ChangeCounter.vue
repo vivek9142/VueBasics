@@ -7,7 +7,8 @@
 export default {
   methods:{
     addOne(){
-    this.$store.commit('increment');
+        // dispatch increment action here
+    this.$store.dispatch('increment');
     }
   }
 };
