@@ -17,8 +17,6 @@ import TheCounter from './components/TheCounter.vue';
 import ChangeCounter from './components/ChangeCounter.vue';
 import FavoriteValue from './components/FavoriteValue.vue';
 
-//----- Added new Component UserAuth added state management methods,actions,getters in store 
-// and based on condition it is allowed access ------
 import UserAuth from './components/UserAuth.vue';
 
 export default {
