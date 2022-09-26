@@ -4,21 +4,32 @@ import { createStore } from 'vuex';
 import App from './App.vue';
 
 /*
-A pretty nice feature provided by Vuex as your store and your state and zone grows
-is the possibility to set up modules.
+the state inside of a module, is actually treated as a local state,
+inside of the module. Mutations actions and getters are global,
+you can access them as before on the main store. But the state is local to this module.
 
-To split your store into multiple modules. You may only have one store per application,
-but this store can be made up of multiple modules To keep your code more manageable.
-You automatically, if you don't set up any modules, have one module, you could say,
-the root module, the root state, but you can then add as many other modules as you want.
+So anything you do on this state inside of this module refers just
+to this state module. So for example, in a getter,
+I would not be able to get the auth status. If I add new getter,
+in the counter module, getters object, TestAuth and I try to return state is locked in,
+this will not work.
 
-For example one module for the counter and another module for authentication.
-Or you leave authentication in the root state, in the root module and outsource the counter
-into an extra module. That would also be possible.
+you notice there's nothing below the button. And if we change it, there's still nothing
+because it doesn't find is locked in the getter here. In the state of this getter.
+Because this getter is in the counter module. And as As I mentioned, the state is local.
 
-so we can create new variable and add state related to its purpose in it
+So here we only have access to the state that belongs to this module.
+So that's important to keep in mind. And it's similar for actions
+and mutations there in context, for example, where you learned earlier,
+that you all have access to the state, 
+
+in case you needed it, you also only have access to the state of this module.
+Now in case you need to work around that, there are ways though.
+For example, in getters inside of a module, you now don't just get state
+and getters as before, but you can now also get access to a root state and root getters.
+And you might remember, that we saw similar properties on this context object earlier 
+in the module. 
 */
-
 const counterModule = {
   state() {
     return {
@@ -47,6 +58,23 @@ const counterModule = {
     },
   },
   getters: {
+    /*
+    This is your way of getting access to the main state,
+    the main getters of the entire store instead of just the state of this specific module.
+
+    So this is your fallback way of getting access to state that's not part
+    of this module, in case you needed. Typically, though, of course,
+    inside of a module, you tend to just work with the state that belongs to the module.
+
+    So you probably don't need this too often, but there can definitely be situations
+    where you do need it.
+    */
+    testAuth(
+      state
+      // getters, rootState, rootGetters
+    ) {
+      return state.isLoggedIn;
+    },
     finalCounter(state) {
       return state.counter * 3;
     },
@@ -68,26 +96,6 @@ const counterModule = {
     },
   },
 };
-
-/*
-With that, our global store, our main store, is way leaner. It now has only the Authlogic 
-left. And we could put this logic into a separate module as well, if we wanted to.
-
-But how do we now get the module back into the store? Well, createStore, this object here
-also takes a modules option. And modules is an object. And here you now add all the modules
-you wanna merge together into one store. You give every module an identifier of your choice,
-
-for example, counter or numbers or whatever the name should be, this is up to you.
-Here I'll go with numbers and then point at the module object that should be merged.
-In this case, the counter module.Like this. And now this will be merged into this store.
-
-If you save this now, everything will work as before, because by default, modules merged 
-into a store are all merged on the same level, so to say. So if you merge a module into 
-this store, it is as if you would have to find all the getters and so on
-directly in the store, as we had it before a couple of minutes ago. That's why we can still 
-dispatch all the actions and use all the getters as before even though we're now using a 
-module.
-*/
 
 const store = createStore({
   modules: {
