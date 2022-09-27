@@ -4,33 +4,30 @@ import { createStore } from 'vuex';
 import App from './App.vue';
 
 /*
-the state inside of a module, is actually treated as a local state,
-inside of the module. Mutations actions and getters are global,
-you can access them as before on the main store. But the state is local to this module.
+Now besides this local state, you can also make the entire module local.
+You can make it name spaced, as it's called, to make sure that multiple modules
+are clearly separated from each other.
 
-So anything you do on this state inside of this module refers just
-to this state module. So for example, in a getter,
-I would not be able to get the auth status. If I add new getter,
-in the counter module, getters object, TestAuth and I try to return state is locked in,
-this will not work.
+Now why might you wanna do that?
 
-you notice there's nothing below the button. And if we change it, there's still nothing
-because it doesn't find is locked in the getter here. In the state of this getter.
-Because this getter is in the counter module. And as As I mentioned, the state is local.
+Well, as you're application grows,you could of course have name clashes.
+You might be using the same getter or the same action name in different modules 
+of the same store.
 
-So here we only have access to the state that belongs to this module.
-So that's important to keep in mind. And it's similar for actions
-and mutations there in context, for example, where you learned earlier,
-that you all have access to the state, 
+So in bigger apps, you could have such clashes and to avoid that you can name space modules.
 
-in case you needed it, you also only have access to the state of this module.
-Now in case you need to work around that, there are ways though.
-For example, in getters inside of a module, you now don't just get state
-and getters as before, but you can now also get access to a root state and root getters.
-And you might remember, that we saw similar properties on this context object earlier 
-in the module. 
+You do that by adding an extra option, inside of your object here,
+and that's the name spaced option which you can set to true.
+If you add name spaced true, you tell vuex that now the entire module
+and not just the state should be kinda detached from the rest of the store.
+
+If you do that though, you will now notice that our getters and our action dispatchers 
+no longer work. Because now these actions and getters are no longer available on the 
+main store. Instead now we have to access them by specifying the correct name space.
 */
+
 const counterModule = {
+  namespaced: true,
   state() {
     return {
       counter: 0,
@@ -58,17 +55,6 @@ const counterModule = {
     },
   },
   getters: {
-    /*
-    This is your way of getting access to the main state,
-    the main getters of the entire store instead of just the state of this specific module.
-
-    So this is your fallback way of getting access to state that's not part
-    of this module, in case you needed. Typically, though, of course,
-    inside of a module, you tend to just work with the state that belongs to the module.
-
-    So you probably don't need this too often, but there can definitely be situations
-    where you do need it.
-    */
     testAuth(
       state
       // getters, rootState, rootGetters
