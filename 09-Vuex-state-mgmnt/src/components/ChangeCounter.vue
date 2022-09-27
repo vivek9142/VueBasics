@@ -23,10 +23,6 @@ export default {
     //   increase:'increase'
     // })
 
-    /*
-    Map actions takes name space as a first argument
-    and then your action names as before.
-    */
     ...mapActions('numbers',{
       inc: 'increment',
       increase:'increase'

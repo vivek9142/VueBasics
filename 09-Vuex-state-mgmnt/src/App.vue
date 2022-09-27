@@ -43,11 +43,6 @@ export default {
       //   value:10
       // });
 
-      /*
-      in app vue, here we're at dispatch, where I dispatch manually actually,
-      the type is now numbers slash increase. So again, name space slash and then 
-      the action name.
-      */
 
       this.$store.dispatch({
         type:'numbers/increase',
