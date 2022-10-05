@@ -1,16 +1,17 @@
 export default {
+  namespaced: true,
   state() {
     return { items: [], total: 0, qty: 0 };
   },
   mutations: {
     addProductToCart(state, payload) {
-      const productData = payload.product;
-      const productInCartIndex = state.cart.items.findIndex(
+      const productData = payload;
+      const productInCartIndex = state.items.findIndex(
         (ci) => ci.productId === productData.id
       );
 
       if (productInCartIndex >= 0) {
-        state.cart.items[productInCartIndex].qty++;
+        state.items[productInCartIndex].qty++;
       } else {
         const newItem = {
           productId: productData.id,
@@ -19,21 +20,21 @@ export default {
           price: productData.price,
           qty: 1,
         };
-        state.cart.items.push(newItem);
+        state.items.push(newItem);
       }
-      state.cart.qty++;
-      state.cart.total += productData.price;
+      state.qty++;
+      state.total += productData.price;
     },
 
     removeProductFromCart(state, payload) {
       const prodId = payload.prodId;
-      const productInCartIndex = state.cart.items.findIndex(
+      const productInCartIndex = state.items.findIndex(
         (cartItem) => cartItem.productId === prodId
       );
-      const prodData = state.cart.items[productInCartIndex];
-      state.cart.items.splice(productInCartIndex, 1);
-      state.cart.qty -= prodData.qty;
-      state.cart.total -= prodData.price * prodData.qty;
+      const prodData = state.items[productInCartIndex];
+      state.items.splice(productInCartIndex, 1);
+      state.qty -= prodData.qty;
+      state.total -= prodData.price * prodData.qty;
     },
 
     login() {
@@ -47,9 +48,13 @@ export default {
 
   actions: {
     addToCart(context, payload) {
-      context.commit('addProductToCart', payload);
+      const prodId = payload.id;
+      const products = context.rootGetters['prods/products'];
+
+      const product = products.find((prod) => prod.id === prodId);
+      context.commit('addProductToCart', product);
     },
-    removeFromCard(context, payload) {
+    removeFromCart(context, payload) {
       context.commit('removeProductFromCart', payload);
     },
   },

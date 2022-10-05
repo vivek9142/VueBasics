@@ -15,16 +15,6 @@ export default {
       isLoggedIn: false,
     };
   },
-  provide() {
-    return {
-      isLoggedIn: this.isLoggedIn,
-      cart: this.cart,
-      addProductToCart: this.addProductToCart,
-      removeProductFromCart: this.removeProductFromCart,
-      login: this.login,
-      logout: this.logout,
-    };
-  },
   methods: {
     addProductToCart(productData) {
       const productInCartIndex = this.cart.items.findIndex(
